@@ -1,0 +1,110 @@
+@import 'tailwindcss';
+
+.geometric-ribbon {
+	position: absolute;
+	pointer-events: none;
+	z-index: 0;
+	will-change: transform, opacity;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(173, 28, 66, 0.2),
+		transparent
+	);
+}
+@layer base {
+	body {
+		/* Скрываем стандартный скроллбар для чистоты эффекта, как в вашем CSS */
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+	body::-webkit-scrollbar {
+		display: none;
+	}
+}
+@layer base {
+	body {
+		font-family:
+			'Segoe UI Variable Display',
+			'Segoe UI',
+			system-ui,
+			-apple-system,
+			sans-serif;
+	}
+}
+@layer utilities {
+	.preserve-3d {
+		transform-style: preserve-3d;
+	}
+
+	.perspective-\[1200px\] {
+		perspective: 1200px;
+	}
+
+	/* Тот самый перелив текста */
+	.text-shine {
+		display: inline-block;
+		background: linear-gradient(
+			110deg,
+			#000 0%,
+			#ad1c42 40%,
+			#000 60%,
+			#ad1c42 100%
+		);
+		background-size: 300% 100%;
+		animation: text-shine 6s ease-in-out infinite;
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	@keyframes text-shine {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+}
+.char {
+	display: inline-block;
+	will-change: transform;
+}
+/* Убираем любые дергания SplitType */
+.word {
+	display: inline-block !important;
+	white-space: nowrap;
+}
+
+.char {
+	display: inline-block !important;
+	will-change: transform, opacity;
+}
+/* Добавь это в глобальный CSS */
+.preserve-3d {
+	transform-style: preserve-3d;
+	backface-visibility: hidden;
+}
+
+h3,
+p,
+span {
+	/* Форсирует аппаратное ускорение и сглаживание */
+	-webkit-font-smoothing: subpixel-antialiased;
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+	/* Убирает дрожание и мыло при 3D трансформациях */
+	transform: translateZ(0);
+}
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
