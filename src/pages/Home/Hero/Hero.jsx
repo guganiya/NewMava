@@ -17,7 +17,7 @@ const Hero = () => {
 			{/* Фоновое изображение с параллаксом */}
 			<div className='absolute inset-0 z-0'>
 				<img
-					src='public/global-logistics-transportation-network.jpg'
+					src='/global-logistics-transportation-network.jpg'
 					alt='Logistics Background'
 					className='w-full h-full object-cover scale-110'
 					style={{

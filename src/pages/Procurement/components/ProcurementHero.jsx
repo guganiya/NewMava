@@ -91,7 +91,7 @@ const ProcurementHero = () => {
 					<div className='w-full md:w-[42%] relative flex flex-col border-t md:border-t-0 md:border-l border-gray-100 bg-[#fafafa] order-2'>
 						<div className='h-[260px] md:h-[420px] w-full overflow-hidden relative'>
 							<img
-								src='public/work/air-index1.jpg'
+								src='/work/air-index1.jpg'
 								alt='Procurement'
 								className='absolute inset-0 w-full h-full object-cover grayscale opacity-90 transition-transform duration-1000 hover:scale-110 hover:grayscale-0'
 							/>

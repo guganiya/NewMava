@@ -1,41 +1,47 @@
 import React, { useState, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
-import Home from './pages/home/Home.jsx'
+import Home from './pages/Home/Home.jsx'
 import SpecialPage from './pages/SpecialPage/SpecialPage.jsx'
 import ProcurementPage from './pages/Procurement/ProcurementPage.jsx'
 import ContactPage from './pages/ContactPage/ContactPage.jsx'
-import ServicesPage from './pages/services/Services.jsx'
+import ServicesPage from './pages/Services/Services.jsx'
 import CustomsPage from './pages/Customs/CustomsPage.jsx'
 import Progressbar from "./components/progressbar.jsx"
 import Navbar from "./components/Navbar.jsx"
+import { AnimatePresence, motion } from 'framer-motion'
 
 export default function App() {
     const [isLoading, setIsLoading] = useState(true)
-    const location = useLocation() // Следит за изменением страницы
+    const location = useLocation()
 
     useEffect(() => {
-        // Включаем лоадер при переходе
+        // При переходе между страницами включаем лоадер
         setIsLoading(true)
-
-        // Увеличиваем время задержки.
-        // 3000ms (3 секунды) хватит, чтобы шкала дошла до конца,
-        // превратилась в "M" и немного "повисела" для красоты.
-        const timer = setTimeout(() => {
-            setIsLoading(false)
-        }, 3000)
-
-        return () => clearTimeout(timer)
-    }, [location.pathname]) // Запускается КАЖДЫЙ РАЗ, когда меняется адрес страницы
+    }, [location.pathname])
 
     return (
         <>
-            {/* Если isLoading true — показываем лоадер, иначе — контент */}
-            {isLoading ? (
-                <Progressbar />
-            ) : (
-                <div className="fade-in"> {/* Можно добавить CSS класс для плавного появления контента */}
+            {/* AnimatePresence позволяет компонентам плавно исчезать при удалении из DOM */}
+            <AnimatePresence mode="wait">
+                {isLoading && (
+                    <Progressbar
+                        key="mava-loader"
+                        onComplete={() => setIsLoading(false)}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* Контент рендерится всегда, но мы управляем его видимостью,
+                чтобы Routes не "сбрасывались" внутри AnimatePresence */}
+            {!isLoading && (
+                <motion.div
+                    key="page-content"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                >
                     <Navbar />
-                    <Routes>
+                    <Routes location={location} key={location.pathname}>
                         <Route path='/' element={<Home />} />
                         <Route path='/special' element={<SpecialPage />} />
                         <Route path='/procurement' element={<ProcurementPage />} />
@@ -43,7 +49,7 @@ export default function App() {
                         <Route path='/services' element={<ServicesPage />} />
                         <Route path='/customs' element={<CustomsPage />} />
                     </Routes>
-                </div>
+                </motion.div>
             )}
         </>
     )
