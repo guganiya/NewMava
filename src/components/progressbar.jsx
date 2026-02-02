@@ -30,7 +30,6 @@ const Progressbar = ({ onComplete, ready = false }) => {
 
     const dashOffset = 1 - progress / 100
 
-    // Точные координаты для построения 3-х треугольников
     const points = {
         L_BOT: { x: 145, y: 180 },
         L_TOP: { x: 205, y: 50 },
@@ -47,15 +46,15 @@ const Progressbar = ({ onComplete, ready = false }) => {
             transition={{ duration: 1.4, ease: [0.43, 0.13, 0.23, 0.96] }}
             className="fixed inset-0 z-[9999] bg-[#030303] flex flex-col items-center justify-center overflow-hidden"
         >
-            {/* ФОНОВАЯ СЕТКА */}
+            {/* СЕТКА */}
             <div className="absolute inset-0 opacity-[0.05]"
                  style={{ backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`, backgroundSize: '50px 50px' }} />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#000_80%)]" />
 
             <div className="relative w-full max-w-[650px] flex flex-col items-center px-6">
 
-                {/* СТАТУС */}
-                <div className="h-10 mb-10 flex flex-col items-center justify-center">
+                {/* STATUS */}
+                <div className="h-10 mb-10">
                     <AnimatePresence mode="wait">
                         {!isDone ? (
                             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center">
@@ -74,11 +73,11 @@ const Progressbar = ({ onComplete, ready = false }) => {
                     </AnimatePresence>
                 </div>
 
-                {/* ЛОГОТИП С ЛИНИЯМИ */}
+                {/* LOGO С ПУЛЬСАЦИЕЙ И ИЗЛУЧЕНИЕМ */}
                 <div className="relative w-full flex items-center justify-center scale-110">
                     <svg viewBox="0 0 520 220" className="w-full h-auto overflow-visible">
                         <defs>
-                            <filter id="neon-white-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <filter id="neon-glow-main" x="-50%" y="-50%" width="200%" height="200%">
                                 <feGaussianBlur stdDeviation="3.5" result="blur" />
                                 <feFlood floodColor="white" floodOpacity="1" result="color" />
                                 <feComposite in="color" in2="blur" operator="in" result="glow" />
@@ -89,10 +88,7 @@ const Progressbar = ({ onComplete, ready = false }) => {
                             </filter>
                         </defs>
 
-                        {/* 1. ПРИЗРАЧНАЯ ОСНОВА */}
-                        <path d={PATH_D} fill="none" stroke="white" strokeWidth="1" strokeOpacity="0.1" />
-
-                        {/* 2. ОСНОВНОЙ КОНТУР М (АНИМАЦИЯ) */}
+                        {/* 1. БУКВА М (ПРЕЖНИЙ ДИЗАЙН + ПУЛЬСАЦИЯ) */}
                         <motion.path
                             d={PATH_D}
                             fill="none"
@@ -103,61 +99,120 @@ const Progressbar = ({ onComplete, ready = false }) => {
                             pathLength="1"
                             strokeDasharray="1"
                             strokeDashoffset={dashOffset}
-                            animate={isDone ? { strokeWidth: 4, filter: 'url(#neon-white-glow)' } : {}}
+                            animate={isDone ? {
+                                strokeWidth: [4, 5, 4],
+                                filter: ['url(#neon-glow-main)', 'url(#neon-glow-main)', 'url(#neon-glow-main)'],
+                                opacity: [0.5, 0.5, 0.5]
+                            } : {}}
+                            transition={isDone ? {
+                                duration: 2,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            } : {}}
                         />
 
-                        {/* 3. ТЕ САМЫЕ ЛИНИИ (ЗАКРЫВАЕМ ТРЕУГОЛЬНИКИ) */}
+                        {/* 2. СВЕТЯЩИЕСЯ ЛИНИИ (ИЗЛУЧЕНИЕ СВЕТА) */}
                         <AnimatePresence>
                             {isDone && (
-                                <g filter="url(#neon-white-glow)">
-                                    {/* ВЕРХНЯЯ ЛИНИЯ: между двумя пиками */}
-                                    <motion.line
-                                        x1={points.L_TOP.x} y1={points.L_TOP.y}
-                                        x2={points.R_TOP.x} y2={points.R_TOP.y}
-                                        stroke="white" strokeWidth="3" strokeLinecap="round"
-                                        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-                                        transition={{ duration: 0.8 }}
-                                    />
+                                <g>
+                                    {/* 1. ГЛУБОКОЕ ФОНОВОЕ ИЗЛУЧЕНИЕ (Ambient Light) */}
+                                    {/* Это создает пятно света на "стене" за логотипом */}
+                                    <g filter="blur(40px)">
+                                        {[
+                                            { p1: points.L_TOP, p2: points.R_TOP, d: 0 },
+                                            { p1: points.L_BOT, p2: points.CENTER, d: 0.2 },
+                                            { p1: points.CENTER, p2: points.R_BOT, d: 0.4 }
+                                        ].map((line, i) => (
+                                            <motion.line
+                                                key={`glow-${i}`}
+                                                x1={line.p1.x + 15} y1={line.p1.y}
+                                                x2={line.p2.x - 15} y2={line.p2.y}
+                                                stroke="white"
+                                                strokeWidth="25" // Очень широкое освещение
+                                                strokeLinecap="round"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0.3, 0.3, 0.3, 0.3, 0.3] }}
+                                                transition={{
+                                                    repeat: Infinity,
+                                                    duration: 2 + i,
+                                                    ease: "easeInOut"
+                                                }}
+                                            />
+                                        ))}
+                                    </g>
 
-                                    {/* НИЖНЯЯ ЛЕВАЯ: закрывает левое "ушко" */}
-                                    <motion.line
-                                        x1={points.L_BOT.x} y1={points.L_BOT.y}
-                                        x2={points.CENTER.x} y2={points.CENTER.y}
-                                        stroke="white" strokeWidth="3" strokeLinecap="round"
-                                        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-                                        transition={{ duration: 0.8, delay: 0.2 }}
-                                    />
+                                    {/* 2. СРЕДНЕЕ СВЕЧЕНИЕ (Halo) */}
+                                    {/* Ореол вокруг самой трубки */}
+                                    <g filter="blur(8px)">
+                                        {[
+                                            { p1: points.L_TOP, p2: points.R_TOP, d: 0 },
+                                            { p1: points.L_BOT, p2: points.CENTER, d: 0.2 },
+                                            { p1: points.CENTER, p2: points.R_BOT, d: 0.4 }
+                                        ].map((line, i) => (
+                                            <motion.line
+                                                key={`halo-${i}`}
+                                                x1={line.p1.x + 15} y1={line.p1.y}
+                                                x2={line.p2.x - 15} y2={line.p2.y}
+                                                stroke="white"
+                                                strokeWidth="8"
+                                                strokeLinecap="round"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: [0.3, 0.3, 0.3, 0.3, 0.3] }}
+                                                transition={{
+                                                    repeat: Infinity,
+                                                    duration: 0.5 + Math.random(),
+                                                    delay: line.d
+                                                }}
+                                            />
+                                        ))}
+                                    </g>
 
-                                    {/* НИЖНЯЯ ПРАВАЯ: закрывает правое "ушко" */}
-                                    <motion.line
-                                        x1={points.CENTER.x} y1={points.CENTER.y}
-                                        x2={points.R_BOT.x} y2={points.R_BOT.y}
-                                        stroke="white" strokeWidth="3" strokeLinecap="round"
-                                        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-                                        transition={{ duration: 0.8, delay: 0.4 }}
-                                    />
-
-                                    {/* СКАНЕР (КРАСНЫЙ ЛУЧ) */}
-                                    <motion.path
-                                        d={PATH_D} fill="none" stroke="#ad1c42" strokeWidth="10"
-                                        initial={{ pathLength: 0, opacity: 0 }}
-                                        animate={{ pathLength: [0, 1], opacity: [0, 0.4, 0] }}
-                                        transition={{ duration: 1.5, ease: "easeInOut" }}
-                                        filter="blur(8px)"
-                                    />
+                                    {/* 3. САМИ ТРУБКИ (Core) */}
+                                    {/* Ядро лампы, которое мерцает как "сдыхающее" */}
+                                    <g filter="url(#neon-glow-main)">
+                                        {[
+                                            { p1: points.L_TOP, p2: points.R_TOP, d: 0 },
+                                            { p1: points.L_BOT, p2: points.CENTER, d: 0.2 },
+                                            { p1: points.CENTER, p2: points.R_BOT, d: 0.4 }
+                                        ].map((line, i) => (
+                                            <motion.line
+                                                key={`core-${i}`}
+                                                x1={line.p1.x + 15} y1={line.p1.y}
+                                                x2={line.p2.x - 15} y2={line.p2.y}
+                                                stroke="white"
+                                                strokeWidth="1.5"
+                                                strokeLinecap="round"
+                                                initial={{ pathLength: 0, opacity: 0 }}
+                                                animate={{
+                                                    pathLength: 1,
+                                                    opacity: [0.3, 0.3, 0.3, 0.3, 0.3], // Мерцание ядра
+                                                }}
+                                                transition={{
+                                                    pathLength: { duration: 0.8, delay: line.d },
+                                                    opacity: {
+                                                        repeat: Infinity,
+                                                        duration: 0.15 + Math.random() * 0.3,
+                                                        ease: "steps(4)" // Делает мерцание дерганым, как у плохой лампы
+                                                    }
+                                                }}
+                                            />
+                                        ))}
+                                    </g>
                                 </g>
                             )}
                         </AnimatePresence>
 
-                        {/* ТОЧКИ (УЗЛЫ) */}
+                        {/* КРАСНЫЙ СКАНЕР */}
                         <AnimatePresence>
-                            {isDone && Object.values(points).map((p, i) => (
-                                <motion.circle
-                                    key={i} cx={p.x} cy={p.y} r="3"
-                                    fill="white" initial={{ scale: 0 }} animate={{ scale: 1 }}
-                                    transition={{ delay: i * 0.1 + 0.5 }}
+                            {isDone && (
+                                <motion.path
+                                    d={PATH_D} fill="none" stroke="#ad1c42" strokeWidth="10"
+                                    initial={{ pathLength: 0, opacity: 0 }}
+                                    animate={{ pathLength: [0, 1], opacity: [0, 0.4, 0] }}
+                                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                                    filter="blur(8px)"
                                 />
-                            ))}
+                            )}
                         </AnimatePresence>
                     </svg>
                 </div>
@@ -180,13 +235,6 @@ const Progressbar = ({ onComplete, ready = false }) => {
                     </motion.p>
                 </div>
             </div>
-
-            {/* ВСПЫШКА */}
-            <AnimatePresence>
-                {isDone && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0, 0.15, 0] }} transition={{ duration: 1.5 }} className="absolute inset-0 bg-[#ad1c42] pointer-events-none blur-[150px]" />
-                )}
-            </AnimatePresence>
         </motion.div>
     )
 }
