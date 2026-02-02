@@ -1,7 +1,8 @@
-import React, {useLayoutEffect, useRef, useState} from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SplitType from 'split-type'
+import { motion, AnimatePresence } from 'framer-motion'
 
 import Navbar from '../../components/Navbar.jsx'
 import Footer from '../../components/Footer.jsx'
@@ -20,6 +21,9 @@ const lightPattern = {
 
 const ContactsPage = () => {
     const containerRef = useRef(null)
+    const [isSending, setIsSending] = useState(false)
+    // Состояние для уведомления
+    const [status, setStatus] = useState({ show: false, message: '', type: 'success' })
 
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
@@ -51,7 +55,7 @@ const ContactsPage = () => {
                         end: 'bottom top',
                         scrub: 1,
                     },
-                    x: window.innerWidth < 768 ? 40 : 100, // Уменьшил смещение для мобилок
+                    x: window.innerWidth < 768 ? 40 : 100,
                     ease: 'none',
                 })
             })
@@ -73,35 +77,72 @@ const ContactsPage = () => {
         return () => ctx.revert()
     }, [])
 
-
-
-    const [isSending, setIsSending] = useState(false);
-
     const onSubmit = async (event) => {
         event.preventDefault();
         setIsSending(true);
 
         const formData = new FormData(event.target);
 
-        // Add your email address to the URL below
-        // You will need to click a link in the first email you receive to activate it
-        const response = await fetch("https://formsubmit.co/ajax/info@ma-va.net", {
-            method: "POST",
-            body: formData
-        });
+        try {
+            const response = await fetch("https://formsubmit.co/ajax/info@ma-va.net", {
+                method: "POST",
+                body: formData
+            });
 
-        if (response.ok) {
-            alert("Success!");
-            event.target.reset();
+            if (response.ok) {
+                setStatus({ show: true, message: "REQUEST SENT SUCCESSFULLY", type: 'success' });
+                event.target.reset();
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            setStatus({ show: true, message: "ERROR SENDING MESSAGE", type: 'error' });
+        } finally {
             setIsSending(false);
-        } else {
-            alert("Error sending message");
-            setIsSending(false);
+            // Плавное автоматическое закрытие через 5 секунд
+            setTimeout(() => setStatus(prev => ({ ...prev, show: false })), 5000);
         }
     };
 
     return (
-        <div className='flex flex-col min-h-screen'>
+        <div className='flex flex-col min-h-screen relative'>
+            {/* ПЛАВНОЕ УВЕДОМЛЕНИЕ (ALERT) */}
+            <AnimatePresence>
+                {status.show && (
+                    <motion.div
+                        initial={{ y: -100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -100, opacity: 0 }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} // Super smooth ease-out
+                        className="fixed top-10 left-0 right-0 z-[10000] flex justify-center px-6 pointer-events-none"
+                    >
+                        <div className="pointer-events-auto bg-white text-black min-w-[320px] md:min-w-[450px] shadow-[0_30px_60px_rgba(0,0,0,0.4)] flex overflow-hidden">
+                            {/* Акцентная полоса */}
+                            <div className={`w-1.5 ${status.type === 'success' ? 'bg-[#ad1c42]' : 'bg-red-600'}`} />
+
+                            <div className="flex-1 py-5 px-8 flex items-center justify-between">
+                                <div className="flex flex-col">
+                                    <span className="text-[9px] font-black tracking-[0.5em] text-gray-400 uppercase italic mb-1">
+                                        System Notification
+                                    </span>
+                                    <span className="text-sm font-black tracking-tighter uppercase italic">
+                                        {status.message}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={() => setStatus(prev => ({ ...prev, show: false }))}
+                                    className="ml-8 opacity-30 hover:opacity-100 transition-opacity duration-300"
+                                >
+                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M1 1L11 11M1 11L11 1" stroke="currentColor" strokeWidth="2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <Navbar />
 
             <main
@@ -229,16 +270,23 @@ const ContactsPage = () => {
                                 required
                             />
 
-                            {/* These hidden inputs configure FormSubmit options */}
                             <input type="hidden" name="_subject" value="New Submission!" />
                             <input type="hidden" name="_captcha" value="false" />
 
                             <button
                                 type='submit'
                                 disabled={isSending}
-                                className='w-full bg-[#ad1c42] py-5 font-[900] uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-all duration-500 disabled:opacity-50'
+                                className='w-full bg-[#ad1c42] py-5 font-[900] uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-all duration-500 disabled:opacity-50 relative overflow-hidden group'
                             >
-                                {isSending ? 'Sending...' : 'Send Request'}
+                                <span className="relative z-10">{isSending ? 'Sending...' : 'Send Request'}</span>
+                                {isSending && (
+                                    <motion.div
+                                        className="absolute inset-0 bg-white/20"
+                                        initial={{ x: '-100%' }}
+                                        animate={{ x: '100%' }}
+                                        transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                                    />
+                                )}
                             </button>
                         </form>
                     </div>
