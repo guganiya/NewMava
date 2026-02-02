@@ -115,93 +115,72 @@ const Progressbar = ({ onComplete, ready = false }) => {
                         <AnimatePresence>
                             {isDone && (
                                 <g>
-                                    {/* 1. ГЛУБОКОЕ ФОНОВОЕ ИЗЛУЧЕНИЕ (Ambient Light) */}
-                                    {/* Это создает пятно света на "стене" за логотипом */}
-                                    <g filter="blur(40px)">
-                                        {[
-                                            { p1: points.L_TOP, p2: points.R_TOP, d: 0 },
-                                            { p1: points.L_BOT, p2: points.CENTER, d: 0.2 },
-                                            { p1: points.CENTER, p2: points.R_BOT, d: 0.4 }
-                                        ].map((line, i) => (
-                                            <motion.line
-                                                key={`glow-${i}`}
-                                                x1={line.p1.x + 15} y1={line.p1.y}
-                                                x2={line.p2.x - 15} y2={line.p2.y}
-                                                stroke="white"
-                                                strokeWidth="25" // Очень широкое освещение
-                                                strokeLinecap="round"
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: [0.3, 0.3, 0.3, 0.3, 0.3] }}
-                                                transition={{
-                                                    repeat: Infinity,
-                                                    duration: 2 + i,
-                                                    ease: "easeInOut"
-                                                }}
-                                            />
-                                        ))}
+                                    <defs>
+                                        {/* ГРАДИЕНТЫ */}
+                                        {/* Для верха: плотный у линии (50), прозрачный выше */}
+                                        <linearGradient id="glow-up" x1="0" y1="1" x2="0" y2="0">
+                                            <stop offset="0%" stopColor="white" stopOpacity="0.6" />
+                                            <stop offset="100%" stopColor="white" stopOpacity="0" />
+                                        </linearGradient>
+                                        {/* Для низа: плотный у линии (180), прозрачный ниже */}
+                                        <linearGradient id="glow-down" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stopColor="white" stopOpacity="0.6" />
+                                            <stop offset="100%" stopColor="white" stopOpacity="0" />
+                                        </linearGradient>
+
+                                        {/* ЖЕСТКИЕ НОЖИ (Разрезы) */}
+                                        {/* Режет всё, что НИЖЕ линии 50 (оставляет только верхний свет) */}
+                                        <clipPath id="cut-top-sharp">
+                                            <rect x="0" y="0" width="600" height="50" />
+                                        </clipPath>
+                                        {/* Режет всё, что ВЫШЕ линии 180 (оставляет только нижний свет) */}
+                                        <clipPath id="cut-bot-sharp">
+                                            <rect x="0" y="180" width="600" height="100" />
+                                        </clipPath>
+                                    </defs>
+
+                                    {/* ВЕРХНИЙ СВЕТ (Светит вверх от 50-й координаты) */}
+                                    <g clipPath="url(#cut-top-sharp)">
+                                        <motion.rect
+                                            x={points.L_TOP.x + 15}
+                                            y={points.L_TOP.y - 45} // Начинается выше линии и идет до неё
+                                            width={points.R_TOP.x - points.L_TOP.x - 30}
+                                            height="45"
+                                            fill="url(#glow-up)"
+                                            filter="blur(10px)"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                        />
                                     </g>
 
-                                    {/* 2. СРЕДНЕЕ СВЕЧЕНИЕ (Halo) */}
-                                    {/* Ореол вокруг самой трубки */}
-                                    <g filter="blur(8px)">
-                                        {[
-                                            { p1: points.L_TOP, p2: points.R_TOP, d: 0 },
-                                            { p1: points.L_BOT, p2: points.CENTER, d: 0.2 },
-                                            { p1: points.CENTER, p2: points.R_BOT, d: 0.4 }
-                                        ].map((line, i) => (
-                                            <motion.line
-                                                key={`halo-${i}`}
-                                                x1={line.p1.x + 15} y1={line.p1.y}
-                                                x2={line.p2.x - 15} y2={line.p2.y}
-                                                stroke="white"
-                                                strokeWidth="8"
-                                                strokeLinecap="round"
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: [0.3, 0.3, 0.3, 0.3, 0.3] }}
-                                                transition={{
-                                                    repeat: Infinity,
-                                                    duration: 0.5 + Math.random(),
-                                                    delay: line.d
-                                                }}
-                                            />
-                                        ))}
-                                    </g>
-
-                                    {/* 3. САМИ ТРУБКИ (Core) */}
-                                    {/* Ядро лампы, которое мерцает как "сдыхающее" */}
-                                    <g filter="url(#neon-glow-main)">
-                                        {[
-                                            { p1: points.L_TOP, p2: points.R_TOP, d: 0 },
-                                            { p1: points.L_BOT, p2: points.CENTER, d: 0.2 },
-                                            { p1: points.CENTER, p2: points.R_BOT, d: 0.4 }
-                                        ].map((line, i) => (
-                                            <motion.line
-                                                key={`core-${i}`}
-                                                x1={line.p1.x + 15} y1={line.p1.y}
-                                                x2={line.p2.x - 15} y2={line.p2.y}
-                                                stroke="white"
-                                                strokeWidth="1.5"
-                                                strokeLinecap="round"
-                                                initial={{ pathLength: 0, opacity: 0 }}
-                                                animate={{
-                                                    pathLength: 1,
-                                                    opacity: [0.3, 0.3, 0.3, 0.3, 0.3], // Мерцание ядра
-                                                }}
-                                                transition={{
-                                                    pathLength: { duration: 0.8, delay: line.d },
-                                                    opacity: {
-                                                        repeat: Infinity,
-                                                        duration: 0.15 + Math.random() * 0.3,
-                                                        ease: "steps(4)" // Делает мерцание дерганым, как у плохой лампы
-                                                    }
-                                                }}
-                                            />
-                                        ))}
+                                    {/* НИЖНИЙ СВЕТ (Светит вниз от 180-й координаты) */}
+                                    <g clipPath="url(#cut-bot-sharp)">
+                                        <motion.rect
+                                            x={points.L_BOT.x + 15}
+                                            y={points.L_BOT.y}
+                                            width={points.CENTER.x - points.L_BOT.x - 30}
+                                            height="45"
+                                            fill="url(#glow-down)"
+                                            filter="blur(10px)"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.2 }}
+                                        />
+                                        <motion.rect
+                                            x={points.CENTER.x + 15}
+                                            y={points.CENTER.y}
+                                            width={points.R_BOT.x - points.CENTER.x - 30}
+                                            height="45"
+                                            fill="url(#glow-down)"
+                                            filter="blur(12px)"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ delay: 0.4 }}
+                                        />
                                     </g>
                                 </g>
                             )}
                         </AnimatePresence>
-
                         {/* КРАСНЫЙ СКАНЕР */}
                         <AnimatePresence>
                             {isDone && (
