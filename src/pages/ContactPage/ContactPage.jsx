@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react'
+import React, {useLayoutEffect, useRef, useState} from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SplitType from 'split-type'
@@ -72,6 +72,33 @@ const ContactsPage = () => {
 
         return () => ctx.revert()
     }, [])
+
+
+
+    const [isSending, setIsSending] = useState(false);
+
+    const onSubmit = async (event) => {
+        event.preventDefault();
+        setIsSending(true);
+
+        const formData = new FormData(event.target);
+
+        // Add your email address to the URL below
+        // You will need to click a link in the first email you receive to activate it
+        const response = await fetch("https://formsubmit.co/ajax/info@ma-va.net", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            alert("Success!");
+            event.target.reset();
+            setIsSending(false);
+        } else {
+            alert("Error sending message");
+            setIsSending(false);
+        }
+    };
 
     return (
         <div className='flex flex-col min-h-screen'>
@@ -180,23 +207,38 @@ const ContactsPage = () => {
                         <p className='text-gray-500 text-[10px] md:text-sm mb-10 italic uppercase tracking-widest text-center md:text-left'>
                             Tell us what you need.
                         </p>
-                        <form className='space-y-6'>
+                        <form onSubmit={onSubmit} className='space-y-6'>
                             <input
-                                type='text'
+                                type="text"
+                                name="name"
                                 placeholder='YOUR NAME'
                                 className='w-full bg-transparent border-b border-white/10 py-4 outline-none focus:border-[#ad1c42] transition-colors font-bold text-[10px] tracking-widest placeholder:text-gray-800 uppercase'
+                                required
                             />
                             <input
-                                type='email'
+                                type="email"
+                                name="email"
                                 placeholder='EMAIL'
                                 className='w-full bg-transparent border-b border-white/10 py-4 outline-none focus:border-[#ad1c42] transition-colors font-bold text-[10px] tracking-widest placeholder:text-gray-800 uppercase'
+                                required
                             />
                             <textarea
+                                name="message"
                                 placeholder='MESSAGE'
                                 className='w-full bg-transparent border-b border-white/10 py-4 outline-none focus:border-[#ad1c42] transition-colors font-bold text-[10px] tracking-widest h-24 resize-none placeholder:text-gray-800 uppercase'
+                                required
                             />
-                            <button className='w-full bg-[#ad1c42] py-5 font-[900] uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-all duration-500'>
-                                Send Request
+
+                            {/* These hidden inputs configure FormSubmit options */}
+                            <input type="hidden" name="_subject" value="New Submission!" />
+                            <input type="hidden" name="_captcha" value="false" />
+
+                            <button
+                                type='submit'
+                                disabled={isSending}
+                                className='w-full bg-[#ad1c42] py-5 font-[900] uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition-all duration-500 disabled:opacity-50'
+                            >
+                                {isSending ? 'Sending...' : 'Send Request'}
                             </button>
                         </form>
                     </div>

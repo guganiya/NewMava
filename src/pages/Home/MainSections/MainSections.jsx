@@ -183,7 +183,7 @@ const AboutSections = () => {
 								<div className='flex items-start gap-6'>
 									{/* Красная линия с тенью */}
 									<div className='w-2 bg-[#AD1C42] h-20 rounded-full shrink-0 shadow-[-10px_10px_20px_rgba(0,0,0,0.5)]' />
-									<p className='text-gray-600 text-lg md:text-xl font-light italic leading-relaxed'>
+									<p className='text-gray text-lg md:text-xl font-light italic leading-relaxed'>
 										{item.desc}
 									</p>
 								</div>

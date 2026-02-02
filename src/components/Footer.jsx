@@ -153,10 +153,10 @@ const Footer = () => {
 									Email
 								</p>
 								<Link
-									to='mailto:info@mava-logistics.com'
+									to='mailto:info@ma-va.net'
 									className='text-sm font-bold group-hover:text-[#AD1C42] transition-colors'
 								>
-									info@mava-logistics.com
+									info@ma-va.net
 								</Link>
 							</div>
 							<div className='group'>
@@ -164,10 +164,10 @@ const Footer = () => {
 									Phone
 								</p>
 								<Link
-									to='mailto:info@mava-logistics.com'
+									to='tel:+993 62 200285'
 									className='text-sm font-bold text-white group-hover:text-[#AD1C42] transition-colors'
 								>
-									+XX XXX XXX XXX
+									+993 62 200285
 								</Link>
 							</div>
 						</div>
