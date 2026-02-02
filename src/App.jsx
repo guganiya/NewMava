@@ -10,73 +10,63 @@ import Progressbar from './components/progressbar.jsx'
 import Navbar from './components/Navbar.jsx'
 import { AnimatePresence, motion } from 'framer-motion'
 
+// Функция ожидания отрисовки (гарантирует, что DOM готов)
 const raf2 = () =>
     new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
 
-const waitForImages = (root, timeoutMs = 12000) => {
+// Улучшенная функция ожидания картинок
+const waitForImages = (root) => {
     if (!root) return Promise.resolve()
 
+    // Ищем все картинки и фоновые изображения (через вычисляемые стили)
     const imgs = Array.from(root.querySelectorAll('img'))
-    if (!imgs.length) return Promise.resolve()
 
-    const pending = imgs.filter((img) => !(img.complete && img.naturalWidth > 0))
-    if (!pending.length) return Promise.resolve()
-
-    return new Promise((resolve) => {
-        let done = false
-        const finish = () => {
-            if (done) return
-            done = true
-            resolve()
-        }
-
-        const t = setTimeout(finish, timeoutMs)
-
-        let left = pending.length
-        const onOne = () => {
-            left -= 1
-            if (left <= 0) {
-                clearTimeout(t)
-                finish()
-            }
-        }
-
-        pending.forEach((img) => {
-            img.addEventListener('load', onOne, { once: true })
-            img.addEventListener('error', onOne, { once: true })
+    const promises = imgs.map((img) => {
+        if (img.complete && img.naturalWidth > 0) return Promise.resolve()
+        return new Promise((resolve) => {
+            img.addEventListener('load', resolve, { once: true })
+            img.addEventListener('error', resolve, { once: true }) // Ошибка тоже считается "завершением"
         })
     })
+
+    return Promise.all(promises)
 }
 
 export default function App() {
     const [isLoading, setIsLoading] = useState(true)
     const [routeReady, setRouteReady] = useState(false)
-
     const location = useLocation()
     const pageRef = useRef(null)
 
     useEffect(() => {
         let cancelled = false
 
+        // При каждой смене пути включаем состояние "подготовки"
         setIsLoading(true)
         setRouteReady(false)
 
         const run = async () => {
-            // дать React смонтировать страницу и начать грузить ресурсы
+            // 1. Ждем два кадра, чтобы React успел отрисовать скрытые компоненты в DOM
             await raf2()
 
-            const fontsReady =
-                document.fonts?.ready?.catch?.(() => undefined) ?? Promise.resolve()
+            if (cancelled) return
 
-            const imgsReady = waitForImages(pageRef.current, 12000)
+            // 2. Ждем шрифты
+            const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve()
 
-            // если что-то зависло — все равно отпускаем (но обычно успевает)
+            // 3. Ждем все картинки внутри pageRef
+            const imgsReady = waitForImages(pageRef.current)
+
+            // 4. Ждем выполнения всех условий (с таймаутом на всякий случай 15 сек)
             await Promise.race([
                 Promise.all([fontsReady, imgsReady]),
-                new Promise((r) => setTimeout(r, 13000)),
+                new Promise((r) => setTimeout(r, 15000))
             ])
 
-            if (!cancelled) setRouteReady(true)
+            if (!cancelled) {
+                // Даем команду Progressbar, что можно завершаться (доходить до 100%)
+                setRouteReady(true)
+            }
         }
 
         run()
@@ -98,24 +88,29 @@ export default function App() {
                 )}
             </AnimatePresence>
 
-            {/* контент ВСЕГДА смонтирован, но скрыт, пока идет лоадер */}
+            {/* ВАЖНО: Контент всегда в DOM, но opacity: 0.
+                Это позволяет waitForImages найти картинки, которые еще не видны.
+            */}
             <motion.div
                 ref={pageRef}
                 key="page-content"
-                initial={false}
+                initial={{ opacity: 0 }}
                 animate={{ opacity: isLoading ? 0 : 1 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-                className={isLoading ? 'pointer-events-none select-none' : ''}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                style={{ visibility: isLoading ? 'hidden' : 'visible' }}
+                className={isLoading ? 'fixed inset-0 overflow-hidden' : ''}
             >
                 <Navbar />
-                <Routes location={location} key={location.pathname}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/special" element={<SpecialPage />} />
-                    <Route path="/procurement" element={<ProcurementPage />} />
-                    <Route path="/contacts" element={<ContactPage />} />
-                    <Route path="/services" element={<ServicesPage />} />
-                    <Route path="/customs" element={<CustomsPage />} />
-                </Routes>
+                <main>
+                    <Routes location={location} key={location.pathname}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/special" element={<SpecialPage />} />
+                        <Route path="/procurement" element={<ProcurementPage />} />
+                        <Route path="/contacts" element={<ContactPage />} />
+                        <Route path="/services" element={<ServicesPage />} />
+                        <Route path="/customs" element={<CustomsPage />} />
+                    </Routes>
+                </main>
             </motion.div>
         </>
     )

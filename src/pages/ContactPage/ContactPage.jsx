@@ -216,14 +216,14 @@ const ContactsPage = () => {
                 <section className='relative min-h-[80vh] md:min-h-screen flex flex-col md:flex-row items-center justify-between px-6 md:px-[10vw] py-20 overflow-hidden'>
                     <div className='absolute inset-0 pointer-events-none z-0' style={lightPattern} />
                     <div className='bg-word absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[18vw] md:text-[14vw] font-black text-black/[0.015] select-none italic uppercase z-0'>
-                        EUROPE
+                        USA
                     </div>
                     <div className='relative z-10 max-w-sm order-2 md:order-1 mt-12 md:mt-0 text-center md:text-left'>
                         <h2 className='split-text text-2xl md:text-4xl font-[900] italic uppercase tracking-tighter mb-3 leading-tight'>
-                            Europe is next.
+                            America is next.
                         </h2>
                         <p className='text-[10px] md:text-sm text-gray-400 italic font-medium uppercase tracking-wider'>
-                            Vilnius, Lithuania
+                            USA, New York
                         </p>
                     </div>
                     <div className='parallax-map relative z-10 order-1 md:order-2 w-full max-w-[750px]'>
