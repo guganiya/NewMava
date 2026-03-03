@@ -30,6 +30,7 @@ const Navbar = () => {
         { name: 'PROCUREMENT', path: '/procurement' },
         { name: 'CUSTOMS', path: '/customs' },
         { name: 'CONTACTS', path: '/contacts' },
+        { name: 'CALCULATIONS', path: '/calculations' },
     ]
 
     const fontStyle = {

@@ -9,6 +9,7 @@ import CustomsPage from './pages/Customs/CustomsPage.jsx'
 import Progressbar from './components/progressbar.jsx'
 import Navbar from './components/Navbar.jsx'
 import { AnimatePresence, motion } from 'framer-motion'
+import MavaLogistics from "./pages/calculations/calculate.tsx";
 
 // Функция ожидания отрисовки (гарантирует, что DOM готов)
 const raf2 = () =>
@@ -100,7 +101,7 @@ export default function App() {
                 style={{ visibility: isLoading ? 'hidden' : 'visible' }}
                 className={isLoading ? 'fixed inset-0 overflow-hidden' : ''}
             >
-                <Navbar />
+
                 <main>
                     <Routes location={location} key={location.pathname}>
                         <Route path="/" element={<Home />} />
@@ -109,6 +110,7 @@ export default function App() {
                         <Route path="/contacts" element={<ContactPage />} />
                         <Route path="/services" element={<ServicesPage />} />
                         <Route path="/customs" element={<CustomsPage />} />
+                        <Route path="/calculations" element={<MavaLogistics />}></Route>
                     </Routes>
                 </main>
             </motion.div>

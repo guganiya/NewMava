@@ -106,6 +106,7 @@ const ContactsPage = () => {
 
     return (
         <div className='flex flex-col min-h-screen relative'>
+            <Navbar />
             {/* ПЛАВНОЕ УВЕДОМЛЕНИЕ (ALERT) */}
             <AnimatePresence>
                 {status.show && (
