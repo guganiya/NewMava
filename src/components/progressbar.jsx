@@ -50,24 +50,31 @@ const Progressbar = ({ onComplete, ready = false }) => {
         return [scalePoint(p1), scalePoint(p2), scalePoint(p3)]
     }
 
+    // Функция для смещения треугольника по вертикали
+    const offsetTriangle = (points, offsetY) => {
+        return points.map(p => ({
+            x: p.x,
+            y: p.y + offsetY
+        }))
+    }
+
     // Масштабированные точки для треугольников (с отступом от М)
-    const [triMainP1, triMainP2, triMainP3] = scaleTriangle(
-        points.L_TOP, points.R_TOP, points.CENTER, 0.82
-    )
-    const [triLeftP1, triLeftP2, triLeftP3] = scaleTriangle(
-        points.L_BOT, points.L_TOP, points.CENTER, 0.82
-    )
-    const [triRightP1, triRightP2, triRightP3] = scaleTriangle(
-        points.CENTER, points.R_TOP, points.R_BOT, 0.82
-    )
+    const scaledMainTri = scaleTriangle(points.L_TOP, points.R_TOP, points.CENTER, 0.78)
+    const scaledLeftTri = scaleTriangle(points.L_BOT, points.L_TOP, points.CENTER, 0.78)
+    const scaledRightTri = scaleTriangle(points.CENTER, points.R_TOP, points.R_BOT, 0.78)
+
+    // Смещаем треугольники: верхний вверх (-), нижние вниз (+)
+    const [triMainP1, triMainP2, triMainP3] = offsetTriangle(scaledMainTri, -8)  // Поднимаем красный вверх
+    const [triLeftP1, triLeftP2, triLeftP3] = offsetTriangle(scaledLeftTri, 10)   // Опускаем левый вниз
+    const [triRightP1, triRightP2, triRightP3] = offsetTriangle(scaledRightTri, 10) // Опускаем правый вниз
 
     // Контур буквы М
     const PATH_M = `M ${points.L_BOT.x} ${points.L_BOT.y} L ${points.L_TOP.x} ${points.L_TOP.y} L ${points.CENTER.x} ${points.CENTER.y} L ${points.R_TOP.x} ${points.R_TOP.y} L ${points.R_BOT.x} ${points.R_BOT.y}`
 
-    // Центральный (верхний) треугольник - уменьшенный
+    // Центральный (верхний) треугольник - уменьшенный и поднятый
     const TRI_MAIN = `M ${triMainP1.x} ${triMainP1.y} L ${triMainP2.x} ${triMainP2.y} L ${triMainP3.x} ${triMainP3.y} Z`
 
-    // Нижние треугольники - уменьшенные
+    // Нижние треугольники - уменьшенные и опущенные
     const TRI_L_BOT = `M ${triLeftP1.x} ${triLeftP1.y} L ${triLeftP2.x} ${triLeftP2.y} L ${triLeftP3.x} ${triLeftP3.y} Z`
     const TRI_R_BOT = `M ${triRightP1.x} ${triRightP1.y} L ${triRightP2.x} ${triRightP2.y} L ${triRightP3.x} ${triRightP3.y} Z`
 
@@ -80,11 +87,12 @@ const Progressbar = ({ onComplete, ready = false }) => {
             className="fixed inset-0 z-[9999] bg-[#030303] flex flex-col items-center justify-center overflow-hidden"
         >
             {/* Сетка на фоне */}
-            <div className="absolute inset-0 opacity-[0.05]"
-                 style={{
-                     backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
-                     backgroundSize: '50px 50px'
-                 }}
+            <div
+                className="absolute inset-0 opacity-[0.05]"
+                style={{
+                    backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
+                    backgroundSize: '50px 50px'
+                }}
             />
 
             <div className="relative w-full max-w-[650px] flex flex-col items-center px-6">
@@ -125,9 +133,9 @@ const Progressbar = ({ onComplete, ready = false }) => {
 
                 {/* ЛОГОТИП */}
                 <div className="relative w-full flex items-center justify-center scale-110">
-                    <svg viewBox="0 0 520 220" className="w-full h-auto overflow-visible">
+                    <svg viewBox="0 0 520 230" className="w-full h-auto overflow-visible">
 
-                        {/* 1. НИЖНИЙ ЛЕВЫЙ ТРЕУГОЛЬНИК (Белый) */}
+                        {/* 1. НИЖНИЙ ЛЕВЫЙ ТРЕУГОЛЬНИК (Белый) - опущен вниз */}
                         <motion.path
                             d={TRI_L_BOT}
                             fill="white"
@@ -144,7 +152,7 @@ const Progressbar = ({ onComplete, ready = false }) => {
                             style={{ transformOrigin: 'center' }}
                         />
 
-                        {/* 2. НИЖНИЙ ПРАВЫЙ ТРЕУГОЛЬНИК (Белый) */}
+                        {/* 2. НИЖНИЙ ПРАВЫЙ ТРЕУГОЛЬНИК (Белый) - опущен вниз */}
                         <motion.path
                             d={TRI_R_BOT}
                             fill="white"
@@ -161,7 +169,7 @@ const Progressbar = ({ onComplete, ready = false }) => {
                             style={{ transformOrigin: 'center' }}
                         />
 
-                        {/* 3. ЦЕНТРАЛЬНЫЙ ТРЕУГОЛЬНИК (Белый -> Красный) */}
+                        {/* 3. ЦЕНТРАЛЬНЫЙ ТРЕУГОЛЬНИК (Белый -> Красный) - поднят вверх */}
                         <motion.path
                             d={TRI_MAIN}
                             initial={{ opacity: 0, scale: 0.8, fill: "#ffffff" }}
@@ -193,7 +201,7 @@ const Progressbar = ({ onComplete, ready = false }) => {
                             animate={isDone ? { strokeOpacity: 0.9 } : { strokeOpacity: 1 }}
                         />
 
-                        {/* Опциональные: тонкие границы треугольников для большего разделения */}
+                        {/* Тонкие границы треугольников для большего разделения */}
                         {isDone && (
                             <>
                                 <motion.path
