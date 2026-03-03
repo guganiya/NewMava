@@ -110,7 +110,7 @@ export default function App() {
                         <Route path="/contacts" element={<ContactPage />} />
                         <Route path="/services" element={<ServicesPage />} />
                         <Route path="/customs" element={<CustomsPage />} />
-                        <Route path="/calculations" element={<MavaLogistics />}></Route>
+                        {/*<Route path="/calculations" element={<MavaLogistics />}></Route>*/}
                     </Routes>
                 </main>
             </motion.div>
