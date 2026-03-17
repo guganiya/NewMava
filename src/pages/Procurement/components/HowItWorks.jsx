@@ -9,37 +9,37 @@ const steps = [
 	{
 		id: '01',
 		title: 'Request & requirements',
-		image: '/servises/2.jpg',
+		image: '/procurement/request&requirements.jpg',
 		desc: 'Detailed analysis of your needs.',
 	},
 	{
 		id: '02',
 		title: 'Supplier verification',
-		image: '/servises/4.jpg',
+		image: '/procurement/supplier-verification2.jpg',
 		desc: 'On-site audits and reliability checks.',
 	},
 	{
 		id: '03',
 		title: 'Samples & QC plan',
-		image: '/servises/9.jpg',
+		image: 'procurement/qc-plan.jpg',
 		desc: 'Testing before mass production starts.',
 	},
 	{
 		id: '04',
 		title: 'Negotiation & Terms',
-		image: '/servises/12.jpg',
+		image: '/procurement/terms.jpg',
 		desc: 'Securing price and safety guarantees.',
 	},
 	{
 		id: '05',
 		title: 'Production control',
-		image: '/servises/2.jpg',
+		image: '/procurement/production-control.jpeg',
 		desc: 'Real-time monitoring of the shop floor.',
 	},
 	{
 		id: '06',
 		title: 'Final Logistics',
-		image: '/servises/4.jpg',
+		image: '/procurement/Final-logistics.jpg',
 		desc: 'Delivery to your door, cleared and safe.',
 	},
 ]

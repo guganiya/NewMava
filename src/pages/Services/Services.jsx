@@ -78,7 +78,7 @@ const servicesData = [
 		footerNote: 'We don’t rush — we move with precision.',
 		img1: '/servises/7.jpg',
 		img2: '/servises/8.jpg',
-		img3: '/servises/9.jpg',
+		img3: '/servises/Rail.png',
 	},
 	{
 		id: 'road',
@@ -103,7 +103,7 @@ const servicesData = [
 			'Road freight with MAVA isn’t just transport. It’s the confidence that everything’s under control — even while you sleep.',
 		img1: '/servises/10.jpg',
 		img2: '/servises/11.jpg',
-		img3: '/servises/12.jpg',
+		img3: '/servises/Road.png',
 	},
 ]
 

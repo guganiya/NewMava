@@ -101,10 +101,37 @@ span {
 	transform: translateZ(0);
 }
 .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+	animation: fadeIn 0.5s ease-in-out;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+/* Настройка для Chrome, Safari и Edge */
+::-webkit-scrollbar {
+	width: 8px; /* Ширина скроллбара */
+}
+
+::-webkit-scrollbar-track {
+	background: #f1f1f1; /* Цвет дорожки */
+}
+
+::-webkit-scrollbar-thumb {
+	background: #ad1c42; /* Цвет самого ползунка */
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #8e1736; /* Цвет при наведении (чуть темнее) */
+}
+
+/* Настройка для Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #ad1c42 #f1f1f1;
 }
