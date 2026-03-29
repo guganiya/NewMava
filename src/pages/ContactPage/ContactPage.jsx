@@ -242,11 +242,9 @@ const ContactsPage = () => {
 					</div>
 					<div className='relative z-10 max-w-sm order-2 md:order-1 mt-12 md:mt-0 text-center md:text-left'>
 						<h2 className='split-text text-2xl md:text-4xl font-[900] italic uppercase tracking-tighter mb-3 leading-tight'>
-							USA is next.
+							Europe is next.
 						</h2>
-						<p className='text-[10px] md:text-sm text-gray-400 italic font-medium uppercase tracking-wider'>
-							USA, New York
-						</p>
+						<p className='text-[10px] md:text-sm text-gray-400 italic font-medium uppercase tracking-wider'></p>
 					</div>
 					<div className='globe-container relative z-10 order-1 md:order-2 flex justify-center'>
 						<img
