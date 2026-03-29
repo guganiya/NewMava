@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 import Navbar from '../../components/Navbar.jsx'
 import Footer from '../../components/Footer.jsx'
-import Globe3D from '../../components/Globe3D.jsx' // Импортируем наш глобус
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -28,10 +27,6 @@ const ContactsPage = () => {
 		message: '',
 		type: 'success',
 	})
-
-	// Определяем размер глобуса в зависимости от экрана
-	const globeSize =
-		typeof window !== 'undefined' && window.innerWidth < 768 ? 320 : 600
 
 	useLayoutEffect(() => {
 		const ctx = gsap.context(() => {
@@ -68,7 +63,7 @@ const ContactsPage = () => {
 				})
 			})
 
-			// Анимация для контейнеров глобусов (вместо parallax-map)
+			// Анимация параллакса для контейнеров с изображениями
 			gsap.utils.toArray('.globe-container').forEach(el => {
 				gsap.to(el, {
 					scrollTrigger: {
@@ -201,8 +196,11 @@ const ContactsPage = () => {
 						</p>
 					</div>
 					<div className='globe-container relative z-10 order-1 md:order-2 flex justify-center'>
-						{/* ЗАМЕНА IMG НА GLOBE */}
-						<Globe3D size={globeSize} targetCountry='Turkmenistan' />
+						<img
+							src='/contact/ashgabat1-removebg-preview.png'
+							alt='Ashgabat Location'
+							className='w-[320px] md:w-[800px] h-auto object-contain'
+						/>
 					</div>
 				</section>
 
@@ -216,12 +214,16 @@ const ContactsPage = () => {
 						CHINA
 					</div>
 					<div className='globe-container relative z-10 flex justify-center mb-12 md:mb-0'>
-						{/* ЗАМЕНА IMG НА GLOBE */}
-						<Globe3D size={globeSize} targetCountry='China' />
+						<img
+							src='/contact/china1-removebg-preview.png'
+							alt='China Location'
+							className='w-[320px] md:w-[800px] h-auto object-contain'
+						/>
 					</div>
 					<div className='relative z-10 max-w-sm text-center md:text-left'>
 						<h2 className='split-text text-2xl md:text-4xl font-[900] italic uppercase tracking-tighter mb-3 leading-tight'>
-							China — our confident step.
+							China — our <br className='hidden md:block' />
+							confident step.
 						</h2>
 						<p className='text-[10px] md:text-sm text-gray-400 italic font-medium uppercase tracking-wider'>
 							Yiwu logistics hub
@@ -247,10 +249,10 @@ const ContactsPage = () => {
 						</p>
 					</div>
 					<div className='globe-container relative z-10 order-1 md:order-2 flex justify-center'>
-						{/* ЗАМЕНА IMG НА GLOBE */}
-						<Globe3D
-							size={globeSize}
-							targetCountry='United States of America'
+						<img
+							src='/contact/europe1-removebg-preview (1).png'
+							alt='USA Location'
+							className='w-[320px] md:w-[800px] h-auto object-contain'
 						/>
 					</div>
 				</section>
