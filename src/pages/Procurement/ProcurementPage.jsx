@@ -4,7 +4,7 @@ import ProcurementHero from './components/ProcurementHero.jsx'
 import ProcurementSystem from './components/ProcurementSteps.jsx'
 import Footer from '../../components/Footer.jsx'
 import BackgroundRibbons from '../../components/BackgroundRibbons.jsx'
-import HowItWorks from './components/HowItWorks.jsx'
+import ProcessScroll from './components/HowItWorks.jsx'
 import FaqAndCta from './components/FaqAndCta.jsx'
 
 export default function ProcurementPage() {
@@ -19,7 +19,7 @@ export default function ProcurementPage() {
 				<Navbar />
 				<ProcurementHero />
 				<ProcurementSystem />
-				<HowItWorks />
+				<ProcessScroll />
 				<FaqAndCta />
 				<Footer />
 			</div>

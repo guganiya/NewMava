@@ -27,7 +27,7 @@ const AboutSections = () => {
 			title: 'An answer to empty promises.',
 			desc: 'MAVA was created as an answer to a market full of formality.',
 			highlight: '#AD1C42',
-			image: '/servises/9.jpg',
+			image: '/home/An answer to empty promises.png',
 			reverse: false,
 		},
 		{
