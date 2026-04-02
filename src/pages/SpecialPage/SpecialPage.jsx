@@ -287,7 +287,10 @@ const SpecialPage = () => {
 				<Navbar />
 			</div>
 
-			<div className='fixed inset-0 overflow-hidden flex items-center justify-center bg-white'>
+			<div
+				className='fixed inset-0 overflow-hidden flex items-center justify-center bg-white'
+				style={{ perspective: '3000px' }}
+			>
 				<div className='relative w-full h-full preserve-3d'>
 					{DATA.map((item, index) => (
 						<SceneFrame
@@ -313,9 +316,14 @@ const SceneFrame = ({ item, index, progress, total }) => {
 		typeof window !== 'undefined' && window.innerWidth < 768 ? -2000 : -3000
 	const startZ = index * zSpacing
 	const endZ = (total - 1) * Math.abs(zSpacing)
-
 	const z = useTransform(progress, [0, 1], [startZ, startZ + endZ])
-	const opacity = useTransform(z, [-1200, -400, 400, 1200], [0, 1, 1, 0])
+	const blurValue = useTransform(z, [zSpacing, 0], [4, 0])
+	const filter = useTransform(blurValue, v => `blur(${v}px)`)
+	const opacity = useTransform(
+		z,
+		[zSpacing * 2, -400, 400, 1200],
+		[0.1, 1, 1, 0],
+	)
 	const scale = useTransform(z, [-1500, 0, 1200], [0.85, 1, 1.1])
 
 	useMotionValueEvent(z, 'change', latest => {
@@ -349,8 +357,9 @@ const SceneFrame = ({ item, index, progress, total }) => {
 				z,
 				opacity,
 				scale,
+				filter, // ПРИМЕНЯЕМ ЗДЕСЬ
 				pointerEvents: isInFocus ? 'auto' : 'none',
-				display: opacity.get() === 0 ? 'none' : 'flex',
+				display: 'flex',
 			}}
 			className='absolute inset-0 flex items-center justify-center preserve-3d px-4'
 		>
@@ -371,7 +380,7 @@ const SceneFrame = ({ item, index, progress, total }) => {
 							backgroundImage: `url(${item.img})`,
 							transform: 'translateZ(0)',
 						}}
-						className='w-full aspect-[16/9] md:aspect-[3/4.2] bg-cover bg-center rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.3)] overflow-hidden'
+						className='w-full aspect-[16/9] md:aspect-[3/4.2] bg-cover bg-center rounded-lg shadow-[-12px_14px_40px_rgba(0,0,0,0.45)] overflow-hidden'
 					/>
 				</div>
 
@@ -399,7 +408,7 @@ const SceneFrame = ({ item, index, progress, total }) => {
 								className={`leading-tight tracking-tight ${
 									line.type === 'highlight'
 										? 'text-[#5c0b1f] font-bold text-[0.8rem] md:text-[1.1rem]'
-										: 'text-gray-600 font-medium text-[0.7rem] md:text-[0.95rem]'
+										: 'text-black font-medium text-[0.7rem] md:text-[0.95rem]'
 								}`}
 							>
 								{line.text}
