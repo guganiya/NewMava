@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { FaInstagram, FaTiktok, FaPhoneAlt } from 'react-icons/fa' // Импортируем иконки
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -29,6 +30,30 @@ const Footer = () => {
 		return () => ctx.revert()
 	}, [])
 
+	// Массив дополнительных контактов
+	const devAndContactLinks = [
+		{
+			icon: <FaTiktok />,
+			path: 'https://www.tiktok.com/@kadyr.muhammedow2',
+			label: 'TikTok',
+		},
+		{
+			icon: <FaInstagram />,
+			path: 'https://www.instagram.com/codeassasinking',
+			label: 'Instagram',
+		},
+		{
+			icon: <FaPhoneAlt />,
+			path: 'tel:+99361862535',
+			label: '+993 61 86 25 35',
+		},
+		{
+			icon: <FaPhoneAlt />,
+			path: 'tel:+99361068912',
+			label: '+993 61 06 89 12',
+		},
+	]
+
 	return (
 		<footer
 			ref={footerRef}
@@ -39,13 +64,11 @@ const Footer = () => {
 					{/* LOGO & DESCRIPTION */}
 					<div className='space-y-6'>
 						<Link to='/' className='flex items-center gap-4 group'>
-							{/* ЛОГОТИП */}
 							<img
 								src='/logo.png'
 								alt='Logo'
 								className='h-10 w-auto object-contain transition-transform duration-500 group-hover:scale-110'
 							/>
-							{/* ТЕКСТ РЯДОМ С ЛОГО */}
 							<div className='flex flex-col leading-none'>
 								<span className='text-xl font-black uppercase tracking-tighter transition-colors group-hover:text-[#AD1C42]'>
 									Mava
@@ -161,7 +184,7 @@ const Footer = () => {
 							</div>
 							<div className='group'>
 								<p className='text-[10px] uppercase text-gray-300 mb-1 tracking-widest'>
-									Phone
+									Office Phone
 								</p>
 								<Link
 									to='tel:+993 62 200285'
@@ -175,11 +198,39 @@ const Footer = () => {
 				</div>
 
 				{/* BOTTOM SECTION */}
-				<div className='pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6'>
-					<p className='text-[10px] uppercase tracking-[0.3em] text-gray-300'>
-						© 2026 MAVA Logistics. All rights reserved.
-					</p>
+				<div className='pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8'>
+					<div className='flex flex-col items-center md:items-start gap-4'>
+						<p className='text-[10px] uppercase tracking-[0.3em] text-gray-300'>
+							© 2026 MAVA Logistics. All rights reserved.
+						</p>
 
+						{/* НОВЫЕ ССЫЛКИ (TikTok, Insta, 2 Телефона) */}
+						<div className='flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-3'>
+							<div className='text-gray-400 '>Developers:</div>
+							{devAndContactLinks.map((item, idx) => (
+								<a
+									key={idx}
+									href={item.path}
+									target={item.path.startsWith('tel:') ? '_self' : '_blank'}
+									rel='noopener noreferrer'
+									className='text-gray-400 hover:text-[#AD1C42] transition-all duration-300 flex items-center gap-2 group'
+								>
+									<span className='text-base group-hover:scale-110 transition-transform'>
+										{item.icon}
+									</span>
+									{item.path.startsWith('tel:') && (
+										<span className='text-[11px] font-mono whitespace-nowrap tracking-tighter'>
+											{item.label}
+										</span>
+									)}
+								</a>
+							))}
+						</div>
+					</div>
+
+					<span className='font-mono text-[10px] tracking-[0.2em] text-gray-500 hidden sm:block'>
+						IST · DXB · AMS · SIN · HKG · NYC
+					</span>
 				</div>
 			</div>
 		</footer>
