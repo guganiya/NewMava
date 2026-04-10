@@ -1,13 +1,23 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { gsap } from 'gsap'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 
+gsap.registerPlugin(ScrollToPlugin)
 const ProcurementHero = () => {
 	const fontStyle = {
 		fontFamily:
 			"'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif",
 	}
-
+	const scrollToProcess = e => {
+		e.preventDefault()
+		gsap.to(window, {
+			duration: 1.2,
+			scrollTo: '#process-section',
+			ease: 'power3.inOut',
+		})
+	}
 	return (
 		<section
 			className='relative min-h-screen py-12 md:py-24 overflow-hidden bg-[#fdfdfd] flex items-center justify-center '
@@ -28,7 +38,7 @@ const ProcurementHero = () => {
 					<div className='w-full md:w-[58%] p-8 md:p-14 flex flex-col justify-center order-1'>
 						{/* Хештеги */}
 						<div className='flex flex-wrap gap-2 mb-6'>
-							{['PROCUREMENT', 'SOURCING', 'CONTROL'].map(tag => (
+							{['PROCUREMENT', 'CONTROL'].map(tag => (
 								<span
 									key={tag}
 									className='flex items-center gap-2 px-3.5 py-1.5 bg-[#f8f0f2] rounded-full text-[10px] md:text-[11px] font-bold text-[#AD1C42] tracking-[0.12em] border border-[#AD1C42]/10'
@@ -69,16 +79,17 @@ const ProcurementHero = () => {
 
 						{/* Кнопки */}
 						<div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-5 mt-10'>
-							<Link
-								to='/HowitWorks'
+							<a
+								href='#process-section'
+								onClick={scrollToProcess} // <--- ОБЯЗАТЕЛЬНО ДОБАВЬ ЭТО
 								className='group relative px-9 py-4 bg-[#AD1C42] text-white rounded-xl font-bold tracking-[0.1em] transition-all hover:bg-[#8e1736] hover:scale-105 active:scale-95 shadow-lg shadow-[#AD1C42]/30 uppercase text-[11px] overflow-hidden text-center'
 							>
 								<span className='relative z-10'>How it works</span>
 								<span className='absolute bottom-3.5 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-white/60 transition-all duration-300 group-hover:w-1/3' />
-							</Link>
+							</a>
 
 							<Link
-								to='/sourcing'
+								to='/customs'
 								className='group relative px-9 py-4 bg-white text-gray-800 border-2 border-gray-100 rounded-xl font-bold tracking-[0.1em] transition-all hover:bg-gray-50 active:scale-95 uppercase text-[11px] overflow-hidden text-center'
 							>
 								<span className='relative z-10'>Request Sourcing</span>

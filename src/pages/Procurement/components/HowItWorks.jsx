@@ -77,6 +77,7 @@ const ProcessScroll = () => {
 
 	return (
 		<section
+			id='process-section'
 			ref={containerRef}
 			className='relative w-full h-screen md:h-screen bg-[#fff] overflow-hidden md:overflow-hidden'
 			style={{ fontFamily: "'Segoe UI Variable Display', sans-serif" }}
